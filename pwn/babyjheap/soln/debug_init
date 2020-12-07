@@ -1,0 +1,14 @@
+add-symbol-file debug/syms.o 0x100
+define get_class
+  set $cls=(void*)(((long long)((*(oop)$arg0)._metadata._compressed_klass) << 3) + 0x800000000L)
+  printf "$cls = class %s (%p)\n", *(char**)($cls + 0x18) + 6, $cls
+end
+
+define class_from_id
+  set $cls=(void*)(((long long)$arg0 << 3) + 0x800000000L)
+  printf "$cls = class %s (%p)\n", *(char**)($cls + 0x18) + 6, $cls
+end
+
+define class_name
+  x/s *(char**)($arg0 + 0x18) + 6
+end

@@ -1,0 +1,3 @@
+linux.py needs a path to kernel sources. You likely need to adjust the path in linux.py
+
+Exploit written by braindead

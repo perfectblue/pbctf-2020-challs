@@ -1,0 +1,13 @@
+[
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-o",
+            "ccdump",
+            "ccdump.c"
+        ],
+        "directory": "/home/henry/git/utcctf-19/ccdump",
+        "file": "ccdump.c"
+    }
+]

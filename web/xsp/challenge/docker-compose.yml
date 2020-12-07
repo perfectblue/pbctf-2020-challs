@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  app:
+    build: ./app/
+    ports:
+        - "127.0.0.1:5000:8080"
+    environment:
+      - PORT=8080
+      - WEB_CONCURRENCY=16
+      - CHALL_HOST=hax.hacker.af:7171
+      - SECRET_KEY=cannot_gu355_t0p_s3cr3t_aftghj
+    depends_on:
+      - redis
+
+  bot:
+    build: ./bot/
+    init: true
+    environment:
+      - CHALL_HOST=hax.hacker.af
+      - CHALL_COOKIE=.eJwtjM0KQiEUBt_lrC98V6_az7Z9BC0jDkfNgiwEXQTiu3eJdsPATKcoTWh_6X-g4kNL_WM5L-ZpWR35YE-sKptcZy5zPSufl0ETveV1W4OU5U7jOv0GXKQ9VukSdIR4pIhgIQo7B-fhHXRACrAKRsNtYCy2NL6HISiC.X78J9Q.WiAPb6PnGWioG3tE5iXoVZRDldo 
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.0-alpine
+

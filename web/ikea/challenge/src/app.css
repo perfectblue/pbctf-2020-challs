@@ -1,0 +1,15 @@
+body {
+  background-color: blue;
+  color: yellow;
+  padding-top: 10vh;
+}
+
+iframe {
+  border: 0;
+  height: 10vh;
+  display: block;
+}
+
+a {
+  color: orange;
+}

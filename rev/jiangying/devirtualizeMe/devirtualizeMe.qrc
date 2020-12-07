@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/devirtualizeMe">
+        <file>lillullmoa.png</file>
+    </qresource>
+</RCC>

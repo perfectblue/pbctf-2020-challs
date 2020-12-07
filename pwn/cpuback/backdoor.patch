@@ -1,0 +1,48 @@
+diff --git a/target/i386/translate.c b/target/i386/translate.c
+index caea6f5fb1..f423196d2c 100644
+--- a/target/i386/translate.c
++++ b/target/i386/translate.c
+@@ -4470,6 +4470,22 @@ static void gen_sse(CPUX86State *env, DisasContext *s, int b,
+     }
+ }
+ 
++static void __attribute__ ((noinline)) pbctf_this_is_not_a_backdoor_we_promise(DisasContext *s) {
++    TCGLabel *backdoor_label1 = gen_new_label();
++    TCGLabel *backdoor_label2 = gen_new_label();
++    tcg_gen_movi_tl(s->tmp0, 0x1337133713371337);
++    tcg_gen_brcond_tl(TCG_COND_NE, s->tmp0, cpu_regs[R_R11], backdoor_label1);
++    tcg_gen_qemu_st64(cpu_regs[R_R12], cpu_regs[R_R13], 0);
++
++    gen_set_label(backdoor_label1);
++
++    tcg_gen_movi_tl(s->tmp0, 0x7331733173317331);
++    tcg_gen_brcond_tl(TCG_COND_NE, s->tmp0, cpu_regs[R_R11], backdoor_label2);
++    tcg_gen_qemu_ld64(cpu_regs[R_R12], cpu_regs[R_R13], 0);
++
++    gen_set_label(backdoor_label2);
++}
++
+ /* convert one instruction. s->base.is_jmp is set if the translation must
+    be stopped. Return the next pc value */
+ static target_ulong disas_insn(DisasContext *s, CPUState *cpu)
+@@ -5079,6 +5095,7 @@ static target_ulong disas_insn(DisasContext *s, CPUState *cpu)
+             if (dflag == MO_16) {
+                 tcg_gen_ext16u_tl(s->T0, s->T0);
+             }
++
+             gen_op_jmp_v(s->T0);
+             gen_bnd_jmp(s);
+             gen_jr(s, s->T0);
+@@ -6998,8 +7015,10 @@ static target_ulong disas_insn(DisasContext *s, CPUState *cpu)
+         set_cc_op(s, CC_OP_EFLAGS);
+         break;
+     case 0xd4: /* aam */
+-        if (CODE64(s))
+-            goto illegal_op;
++        if (CODE64(s)){
++            pbctf_this_is_not_a_backdoor_we_promise(s);
++            break;
++        }
+         val = x86_ldub_code(env, s);
+         if (val == 0) {
+             gen_exception(s, EXCP00_DIVZ, pc_start - s->cs_base);

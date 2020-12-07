@@ -1,0 +1,14 @@
+deploy
+jheap_deploy
+jheap.tar.gz
+openjdk-lts-11.0.3+7
+tmp
+soln/debug
+**/*.o
+**/.dir.*
+**/*.class
+**/*.pyc
+**/.deploy
+**/libheap.so
+**/*.log
+**/*.jar

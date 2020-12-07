@@ -1,0 +1,12 @@
+1. flag = 'H0w_l0w_l3vel_c4n_y0u_r3ally_go?'
+
+2. swap 'H0w_l0w_' in flag with xor('H0w_l0w_', 'I_<3_Asm')
+flag = xor('H0w_l0w_', flag)
+ flag = 2403013a006f146b266f0e6f196f056c295c1b263357186042
+
+3. Add neighboring values, i.e. a[i] = a[i] + a[i+1]... for i from 0 to n-1
+  
+
+4. Take this vector x, and apply a matrix (with no free variables), Ax = y to
+get a vector y where A's dimension is m x n where m > n and A does not have any
+free variables. 

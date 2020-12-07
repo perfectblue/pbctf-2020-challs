@@ -1,0 +1,9 @@
+<h1>Note</h1>
+
+<div class="card" style="width: 24rem;">
+  <div class="card-body">
+    <h4 class="card-title"><%= @existing_note.author %></h4>
+    <h6 class="card-subtitle mb-2 text-muted"><%= @existing_note.date.strftime("%F %T") %></h6>
+    <p class="card-text"><%= @existing_note.body %></p>
+  </div>
+</div>

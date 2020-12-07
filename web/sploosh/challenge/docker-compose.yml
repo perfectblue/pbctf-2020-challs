@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  webapp:
+    build: .
+    env_file:
+      - ./flag.env
+    networks:
+      sploosh_internal:
+        ipv4_address: 172.16.0.14
+
+    ports:
+      - 9000:80
+    volumes:
+      - ./src:/var/www/html/:ro
+
+  splash:
+    image: scrapinghub/splash
+    networks:
+      sploosh_internal:
+        ipv4_address: 172.16.0.13
+
+networks:
+  sploosh_internal:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.0.0/24

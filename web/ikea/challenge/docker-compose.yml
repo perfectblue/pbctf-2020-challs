@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  webapp:
+    build: .
+    env_file:
+      - ./flag.env
+    ports:
+      - 10000:80
+    volumes:
+      - ./src:/var/www/html/:ro
+
+  bot:
+    build: ./bot/
+    init: true
+    environment:
+      - CHALL_HOST=ikea-name-generator.chal.perfect.blue
+      - CHALL_COOKIE=be2171a063883cd6f356707eb8dd601d6d8ac26a
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.0-alpine

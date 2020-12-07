@@ -1,0 +1,88 @@
+mt(mt')[kk].HI = Y & UPPER
+  where m' = mt'[kk+M]     if kk >= L-M
+             mt(mt')[kk+M] otherwise
+        K = mt'[kk] ^ m'
+        X = 0x1   if K & UPPER
+            0x0   otherwise
+        Y = (K ^ (X * 0x9908b0df)) << 1 | X
+mt(mt')[kk+1].LO = Y & LOWER
+  where m' = mt'[kk+M]     if kk >= L-M
+             mt(mt')[kk+M] otherwise
+        K = mt'[kk] ^ m'
+        X = 0x1   if K & UPPER
+            0x0   otherwise
+        Y = (K ^ (X * 0x9908b0df)) << 1 | X
+
+mt'(mt)[kk] = m ^ (y >> 1) ^ 0x99c8b0df * (y & 1)
+  where m = mt'(mt)[kk+M]   if kk >= L-M
+            mt[kk+M]        otherwise
+        y = mt[kk] & UPPER | mt[kk+1] & LOWER
+
+PROVE \/MT kk. mt(mt'(MT))[kk] == MT[kk]
+
+if kk < L-M:
+  in mt',
+    m = MT[kk+M],
+    y = MT[kk] & UPPER | MT[kk+1] & LOWER
+    therefore mt'(MT)[kk] = MT[kk+M] ^ (y >> 1) ^ 0x99c8b0df * (MT[kk+1] & 1)
+else
+  in mt'
+    m = mt'(MT)[kk+M]
+    y = MT[kk] & UPPER | MT[kk+1] & LOWER
+    therefore mt'(MT)[kk] = mt'(MT)[kk+M] ^ (y >> 1) ^ 0x9908b0df * (MT[kk+1] & 1)
+    
+
+if kk < L-M:
+  mt'(MT)[kk] = m1 ^ (y1 >> 1) ^ 0x9908b0df * (y1 & 1)
+    where m1 = MT[kk+M]
+          y1 = MT[kk] & UPPER | MT[kk+1] & LOWER
+  m' = mt(mt'(MT))[kk+M]
+  K = mt'(MT)[kk] ^ mt(mt'(MT))[kk+M]
+    = y1 >> 1 ^ 0x9908b0df * (y1 & 1)
+  X = y1 & 1
+  Y = (K ^ (X * 0x9908b0df)) << 1 | X
+    = (y1 >> 1 << 1) | y1 & 1
+    = y1
+    = MT[kk] & UPPER | MT[kk+1] & LOWER
+else if L-M <= kk:
+  mt'(MT)[kk] = m1 ^ (y1 >> 1) ^ 0x9908b0df * (y1 & 1)
+    where m1 = mt'(MT)[kk+M]
+          y1 = MT[kk] & UPPER | MT[kk+1] & LOWER
+  mt'(MT)[kk+M] = m1 ^ (y1 >> 1) ^ 0x9908b0df * (y1 & 1)
+    where m2 = mt'(MT)[kk+2*M]
+          y2 = MT[kk+M] & UPPER | MT[kk+1+M] & LOWER
+  m' = mt'(MT)[kk+M] 
+  K = mt'(MT)[kk] ^ mt'(MT)[kk+M]
+    = mt'(MT)[kk+M] ^ mt'(MT)[kk+M] ^ (y1 >> 1) ^ 0x9908b0df * (MT[kk+1] & 1)
+    = y1 >> 1 ^ 0x9908b0df * (y1 & 1)
+  X = y1 & 1
+  Y = (K ^ (X * 0x9908b0df)) << 1 | X
+    = (y1 >> 1 << 1) | y1 & 1
+    = y1
+    = MT[kk] & UPPER | MT[kk+1] & LOWER
+
+mt(mt'(MT))[kk].HI = Y & UPPER = MT[kk]
+mt(mt'(MT))[kk+1].LO = Y & LOWER = MT[kk+1]
+
+
+
+  in mt(mt'(MT)).LO
+
+
+    therfore 
+      
+
+    K = mt'[kk] ^ mt'[kk+M]
+      m1 = MT[kk+M], y1 = MT[kk] & UPPER | MT[kk+1] & LOWER
+        therefore mt'[kk] = MT[kk+M] ^ (y1 >> 1) ^ 0x99c8b0df * (MT[kk+1] & 1)
+      m2 = MT[kk+2M], y2 = MT[kk+M] & UPPER | MT[kk+M+1] & LOWER
+        therefore mt'[kk+M] = MT[kk+2M] ^ (y2 >> 1) ^ 0x99c8b0df * (MT[kk+1+M] & 1)
+      therfore K = MT[kk+M] ^ MT[kk+2M] ^ W >> 1 ^ V >> 1 ^ 0x99c8b0df * (W & 1)
+        where W = (MT[kk+1] ^ MT[kk+1+M]) & LOWER
+              V = (MT[kk] ^ MT[kk+M]) & UPPER
+    X = W & 1
+
+
+
+if kk >= L-M:
+  in mt', m = mt'(mt)

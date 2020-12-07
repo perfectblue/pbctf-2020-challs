@@ -1,0 +1,64 @@
+AppClassLoader (0x4e5d3)
+----
+0c: parent        : ClassLoader 
+10: name          : String %%  (app)
+14:               : Module
+18: name2         : String ("'app'")
+1c:               : ConcurrentHashMap
+20:               : ConcurrentHashMap
+24:               : Vector
+28:               : ProtectionDomain
+2c:               : ConcurrentHashMap
+30:               : ConcurrentHashMap **
+34:               : Object
+40:               : ConcurrentHashMap
+48:               : long (addr)
+50:               : ??
+54:               : int
+58:               : ConcurrentHashMap
+5c: parent2       : ClassLoader
+60: ucp           : URLClassPath
+64:               : ConcurrentHashMap
+68:               : ConcurrentHashMap
+70: ucp2          : URLClassPath
+74: ???           : ???
+
+URLClassPath (0x382dd)
+-----
+10: path          : ArrayList<URL>
+14: unopenedUrls  : ArrayDeque
+18: loaders       : ArrayList
+1c: lmap          : HashMap<String, Loader>
+20: jarHandler    : URLStreamHandler
+24: closed        : boolean
+
+ArrayList (0x3b1fa)
+-----
+0c: modCount      : int
+10: size          : int
+14: array         : Object[]
+
+Object[] (0x546)
+
+ArrayDeque (0x37447)
+-----
+0c: head          : int
+10: tail          : int
+14: array         : Object[]
+
+URL (0x4ea34)
+-----
+0c: port          : int (-1)
+10: hashCode      : int (-1)
+14: protocol      : String
+18: host          : String ("")
+1c: file          : String
+20: query         : String (null)
+24: authority     : String ("")
+28: path          : String
+2c: userInfo      : String (null)
+30: ref           : String (null)
+34: hostAddress   : InetAddress (null)
+38: handler       : URLStreamHandler
+3c: tempState     : ???
+

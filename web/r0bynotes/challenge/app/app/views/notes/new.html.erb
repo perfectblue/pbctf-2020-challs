@@ -1,0 +1,15 @@
+<h1>New note</h1>
+
+<%= form_with scope: :note, url: notes_path, local: true do |form| %>
+  <div class="form-group">
+    <%= form.label :author %><br>
+    <%= form.text_field :author, class: "form-control"  %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :body %><br>
+    <%= form.text_area :body, class: "form-control"  %>
+  </div>
+
+  <%= form.submit class: "btn btn-primary" %>
+<% end %>

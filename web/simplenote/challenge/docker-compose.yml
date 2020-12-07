@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  web:
+    build: ./web
+    ports:
+      - "18888:80"
+    links:
+      - app
+    depends_on:
+      - app
+  app:
+    build:
+      context: ./app
+      args:
+        - FLAG

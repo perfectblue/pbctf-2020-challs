@@ -1,0 +1,265 @@
+Finite field arithmetic
+From Wikipedia, the free encyclopedia
+Jump to navigation
+Jump to search
+
+In mathematics, finite field arithmetic is arithmetic in a finite field (a field containing a finite number of elements) as opposed to arithmetic in a field with an infinite number of elements, like the field of rational numbers.
+
+While no finite field is infinite, there are infinitely many different finite fields. Their number of elements is necessarily of the form pn where p is a prime number and n is a positive integer, and two finite fields of the same size are isomorphic. The prime p is called the characteristic of the field, and the positive integer n is called the dimension of the field over its prime field.
+
+Finite fields are used in a variety of applications, including in classical coding theory in linear block codes such as BCH codes and Reed–Solomon error correction, in cryptography algorithms such as the Rijndael (AES) encryption algorithm, in tournament scheduling, and in the design of experiments.
+Contents
+
+    1 Effective polynomial representation
+    2 Primitive polynomials
+    3 Addition and subtraction
+    4 Multiplication
+        4.1 Rijndael's (AES) finite field
+    5 Multiplicative inverse
+    6 Implementation tricks
+        6.1 Generator based tables
+        6.2 Carryless multiply
+        6.3 Composite field
+    7 Program examples
+        7.1 C programming example
+        7.2 D programming example
+    8 See also
+    9 References
+    10 Sources
+    11 External links
+
+Effective polynomial representation
+
+The finite field with pn elements is denoted GF(pn) and is also called the Galois field, in honor of the founder of finite field theory, Évariste Galois. GF(p), where p is a prime number, is simply the ring of integers modulo p. That is, one can perform operations (addition, subtraction, multiplication) using the usual operation on integers, followed by reduction modulo p. For instance, in GF(5), 4 + 3 = 7 is reduced to 2 modulo 5. Division is multiplication by the inverse modulo p, which may be computed using the extended Euclidean algorithm.
+
+A particular case is GF(2), where addition is exclusive OR (XOR) and multiplication is AND. Since the only invertible element is 1, division is the identity function.
+
+Elements of GF(pn) may be represented as polynomials of degree strictly less than n over GF(p). Operations are then performed modulo R where R is an irreducible polynomial of degree n over GF(p), for instance using polynomial long division. The addition of two polynomials P and Q is done as usual; multiplication may be done as follows: compute W = P⋅Q as usual, then compute the remainder modulo R (there exist better ways to do this).
+
+There are other representations of the elements of GF(pn), some are isomorphic to the polynomial representation above and others which look quite different (for instance, using matrices).
+
+When the prime is 2, it is conventional to express elements of GF(pn) as binary numbers, with each term in a polynomial represented by one bit in the corresponding element's binary expression. Braces ( "{" and "}" ) or similar delimiters are commonly added to binary numbers, or to their hexadecimal equivalents, to indicate that the value is an element of a field. For example, the following are equivalent representations of the same value in a characteristic 2 finite field:
+Polynomial 	x6 + x4 + x + 1
+Binary 	{01010011}
+Hexadecimal 	{53}
+Primitive polynomials
+
+There are many irreducible polynomials (sometimes called reducing polynomials) that can be used to generate a finite field, but they do not all give rise to the same representation of the field.
+
+A monic irreducible polynomial of degree n having coefficients in the finite field GF(q), where q = pt for some prime p and positive integer t, is called a primitive polynomial if all of its roots are primitive elements of GF(qn).[1][2] In the polynomial representation of the finite field, this implies that x is a primitive element. There is at least one irreducible polynomial for which x is a primitive element.[3] In other words, for a primitive polynomial, the powers of x generate every nonzero value in the field. In the following examples it is best not to use the polynomial representation, as the meaning of x changes between the examples. The monic irreducible polynomial x8 + x4 + x3 + x + 1 over GF(2) is not primitive. Let λ be a root of this polynomial (in the polynomial representation this would be x), that is, λ8 + λ4 + λ3 + λ + 1 = 0. Now λ51 = 1, so λ is not a primitive element of GF(28) and generates a multiplicative subgroup of order 51.[4] However, x8 + x4 + x3 + x2 + 1 is a primitive polynomial.[4] Consider the field element λ + 1 (in the polynomial representation this would be x + 1). Now (λ+1)8 + (λ+1)4 + (λ+1)3 + (λ+1)2 + 1 = λ8 + λ4 + λ3 + λ + 1 = 0. As all the roots of this primitive polynomial are primitive elements, λ + 1 is a primitive element of GF(28) ((λ + 1)255 = 1 and no smaller power does). GF(28) has 128 generators (see Number of primitive elements). Having x as a generator for a finite field is beneficial for many computational mathematical operations.
+Addition and subtraction
+
+Addition and subtraction are performed by adding or subtracting two of these polynomials together, and reducing the result modulo the characteristic.
+
+In a finite field with characteristic 2, addition modulo 2, subtraction modulo 2, and XOR are identical. Thus,
+Polynomial 	(x6 + x4 + x + 1) + (x7 + x6 + x3 + x) = x7 + x4 + x3 + 1
+Binary 	{01010011} + {11001010} = {10011001}
+Hexadecimal 	{53} + {CA} = {99}
+
+Under regular addition of polynomials, the sum would contain a term 2x6. This term becomes 0x6 and is dropped when the answer is reduced modulo 2.
+
+Here is a table with both the normal algebraic sum and the characteristic 2 finite field sum of a few polynomials:
+p1 	p2 	p1 + p2 under…
+K[x] 	GF(2n)
+x3 + x + 1 	x3 + x2 	2x3 + x2 + x + 1 	x2 + x + 1
+x4 + x2 	x6 + x2 	x6 + x4 + 2x2 	x6 + x4
+x + 1 	x2 + 1 	x2 + x + 2 	x2 + x
+x3 + x 	x2 + 1 	x3 + x2 + x + 1 	x3 + x2 + x + 1
+x2 + x 	x2 + x 	2x2 + 2x 	0
+
+In computer science applications, the operations are simplified for finite fields of characteristic 2, also called GF(2n) Galois fields, making these fields especially popular choices for applications.
+Multiplication
+
+Multiplication in a finite field is multiplication modulo an irreducible reducing polynomial used to define the finite field. (I.e., it is multiplication followed by division using the reducing polynomial as the divisor—the remainder is the product.) The symbol "•" may be used to denote multiplication in a finite field.
+Rijndael's (AES) finite field
+
+Rijndael (standardised as AES) uses the characteristic 2 finite field with 256 elements, which can also be called the Galois field GF(28). It employs the following reducing polynomial for multiplication:
+
+    x8 + x4 + x3 + x + 1.
+
+For example, {53} • {CA} = {01} in Rijndael's field because
+
+    	(x6 + x4 + x + 1)(x7 + x6 + x3 + x)
+    = 	(x13 + x12 + x9 + x7) + (x11 + x10 + x7 + x5) + (x8 + x7 + x4 + x2) + (x7 + x6 + x3 + x)
+    = 	x13 + x12 + x9 + x11 + x10 + x5 + x8 + x4 + x2 + x6 + x3 + x
+    = 	x13 + x12 + x11 + x10 + x9 + x8 + x6 + x5 + x4 + x3 + x2 + x 
+
+and
+
+    	x13 + x12 + x11 + x10 + x9 + x8 + x6 + x5 + x4 + x3 + x2 + x modulo x8 + x4 + x3 + x1 + 1
+    = 	(11111101111110 mod 100011011)
+    = 	{3F7E mod 11B} = {01}
+    = 	1 (decimal) 
+
+The latter can be demonstrated through long division (shown using binary notation, since it lends itself well to the task. Notice that exclusive OR is applied in the example and not arithmetic subtraction, as one might use in grade-school long division.):
+
+                        
+          11111101111110 (mod) 100011011
+         ^100011011     
+          01110000011110
+          ^100011011    
+           0110110101110
+           ^100011011   
+            010101110110
+            ^100011011  
+             00100011010
+              ^100011011  
+               000000001
+
+(The elements {53} and {CA} are multiplicative inverses of one another since their product is 1.)
+
+pbctf{I_love_gf2p8mul!Heart_hEart_heArt_heaRt_hearT}
+
+Multiplication in this particular finite field can also be done using a modified version of the "peasant's algorithm". Each polynomial is represented using the same binary notation as above. Eight bits is sufficient because only degrees 0 to 7 are possible in the terms of each (reduced) polynomial.
+
+This algorithm uses three variables (in the computer programming sense), each holding an eight-bit representation. a and b are initialized with the multiplicands; p accumulates the product and must be initialized to 0.
+
+At the start and end of the algorithm, and the start and end of each iteration, this invariant is true: a b + p is the product. This is obviously true when the algorithm starts. When the algorithm terminates, a or b will be zero so p will contain the product.
+
+    Run the following loop eight times (once per bit). It is OK to stop when a or b is zero before an iteration:
+        If the rightmost bit of b is set, exclusive OR the product p by the value of a. This is polynomial addition.
+        Shift b one bit to the right, discarding the rightmost bit, and making the leftmost bit have a value of zero. This divides the polynomial by x, discarding the x0 term.
+        Keep track of whether the leftmost bit of a is set to one and call this value carry.
+        Shift a one bit to the left, discarding the leftmost bit, and making the new rightmost bit zero. This multiplies the polynomial by x, but we still need to take account of carry which represented the coefficient of x7.
+        If carry had a value of one, exclusive or a with the hexadecimal number 0x1b (00011011 in binary). 0x1b corresponds to the irreducible polynomial with the high term eliminated. Conceptually, the high term of the irreducible polynomial and carry add modulo 2 to 0.
+    p now has the product
+
+This algorithm generalizes easily to multiplication over other fields of characteristic 2, changing the lengths of a, b, and p and the value 0x1b appropriately.
+Multiplicative inverse
+
+See also Itoh–Tsujii inversion algorithm.
+
+The multiplicative inverse for an element a of a finite field can be calculated a number of different ways:
+
+    By multiplying a by every number in the field until the product is one. This is a brute-force search.
+    Since the nonzero elements of GF(pn) form a finite group with respect to multiplication, apn−1 = 1 (for a ≠ 0), thus the inverse of a is apn−2.
+    By using the extended Euclidean algorithm.
+    By making logarithm and exponentiation tables for the finite field, subtracting the logarithm from pn−1 and exponentiating the result.
+    By making an modular multiplicative inverse table for the finite field and doing a lookup.
+    By mapping to a composite field where inversion is simpler, and mapping back.
+    By constructing a special integer (in case of a finite field of a prime order) or a special polynomial (in case of a finite field of a non-prime order) and dividing it by a.[5]
+
+Implementation tricks
+Generator based tables
+
+When developing algorithms for Galois field computation on small Galois fields, a common performance optimization approach is to find a generator g and use the identity:
+
+    a b = g log g ⁡ ( a b ) = g log g ⁡ ( a ) + log g ⁡ ( b ) {\displaystyle ab=g^{\log _{g}(ab)}=g^{\log _{g}(a)+\log _{g}(b)}} {\displaystyle ab=g^{\log _{g}(ab)}=g^{\log _{g}(a)+\log _{g}(b)}}
+
+to implement multiplication as a sequence of table look ups for the logg(a) and gy functions and an integer addition operation. This exploits the property that every finite field contains generators. In the Rijndael field example, the polynomial x + 1 (or {03}) is one such generator. A necessary but not sufficient condition for a polynomial to be a generator is to be irreducible.
+
+An implementation must test for the special case of a or b being zero, as the product will also be zero.
+
+This same strategy can be used to determine the multiplicative inverse with the identity:
+
+    a − 1 = g log g ⁡ ( a − 1 ) = g − log g ⁡ ( a ) = g | g | − log g ⁡ ( a ) {\displaystyle a^{-1}=g^{\log _{g}\left(a^{-1}\right)}=g^{-\log _{g}(a)}=g^{|g|-\log _{g}(a)}} {\displaystyle a^{-1}=g^{\log _{g}\left(a^{-1}\right)}=g^{-\log _{g}(a)}=g^{|g|-\log _{g}(a)}}
+
+Here, the order of the generator, |g|, is the number of non-zero elements of the field. In the case of GF(28) this is 28 − 1 = 255. That is to say, for the Rijndael example: (x + 1)255 = 1. So this can be performed with two look up tables and an integer subtract. Using this idea for exponentiation also derives benefit:
+
+    a n = g log g ⁡ ( a n ) = g n log g ⁡ ( a ) = g n log g ⁡ ( a ) ( mod | g | ) {\displaystyle a^{n}=g^{\log _{g}\left(a^{n}\right)}=g^{n\log _{g}(a)}=g^{n\log _{g}(a){\pmod {|g|}}}} {\displaystyle a^{n}=g^{\log _{g}\left(a^{n}\right)}=g^{n\log _{g}(a)}=g^{n\log _{g}(a){\pmod {|g|}}}}
+
+This requires two table look ups, an integer multiplication and an integer modulo operation. Again a test for the special case a = 0 must be performed.
+
+However, in cryptographic implementations, one has to be careful with such implementations since the cache architecture of many microprocessors leads to variable timing for memory access. This can lead to implementations that are vulnerable to a timing attack.
+Carryless multiply
+
+For binary fields GF(2^n), field multiplication can be implemented using a carryless multiply such as CLMUL_instruction_set, which is good for n <= 64. A multiplication uses one carryless multiply to produce a product (up to 2n-1 bits), another carryless multiply of a pre-computed inverse of the field polynomial to produce a quotient = ⌊ product / (field polynomial) ⌋ , a multiply of the quotient by the field polynomial, then an xor: result = product ⊕ ((field polynomial) ⌊ product / (field polynomial) ⌋). The last 3 steps (pclmulqdq, pclmulqdq, xor) are used in the Barrett reduction step for fast computation of CRC using the X86 pclmulqdq instruction. [6]
+Composite field
+
+When k is a composite number, there will exist isomorphisms from a binary field GF(2k) to an extension field of one of its subfields, that is, GF((2m)n) where k = m n. Utilizing one of these isomorphisms can simplify the mathematical considerations as the degree of the extension is smaller with the trade off that the elements are now represented over a larger subfield.[7] To reduce gate count for hardware implementations, the process may involve multiple nesting, such as mapping from GF(28) to GF(((22)2)2).[8]. There is an implementation constraint, the operations in the two representations must be compatible, so explicit use of the isomorphism is needed. More precisely, the isomorphism will be denoted by map(), it is a bijection that maps an element of GF(2k) to GF((2m)n), satisfying: map(a+b) = map(a) + map(b) and map(a b) = map(a) map(b), where the operations on the left side occur in GF(2k) before mapping and the operations on the right side occur in GF((2m)n) after mapping.[9] The isomorphism is usually implemented with a k by k bit matrix, used to perform a matrix multiply over GF(2) of an element of GF(2k) treated as a k by 1 matrix. Define α as a primitive element of GF(2k), and β as a primitive element of GF((2m)n). Then βj = map(αj) and αj = map−1(βj). The values of α and β determine the mapping matrix and its inverse. Since the actual math is performed in GF((2m)n), the reducing polynomial for GF((2m)n) is usually primitive and β = x in GF((2m)n). In order to meet the compatibility constraint for addition and multiplication, a search is done to choose any primitive element α of GF(2k) that will meet the constraint. Mapping to a composite field can be generalized to map GF(pk) to a composite field such as GF((pm)n), for p a prime number greater than 2, but such fields are not commonly used in practice.
+Program examples
+C programming example
+
+Here is some C code which will add and multiply numbers in the characteristic 2 finite field of order 28, used for example by Rijndael algorithm or Reed–Solomon, using the Russian Peasant Multiplication algorithm:
+
+/* Add two numbers in the GF(2^8) finite field */
+uint8_t gadd(uint8_t a, uint8_t b) {
+	return a ^ b;
+}
+
+/* Multiply two numbers in the GF(2^8) finite field defined 
+ * by the polynomial x^8 + x^4 + x^3 + x + 1 = 0
+ * using the Russian Peasant Multiplication algorithm
+ * (the other way being to do carry-less multiplication followed by a modular reduction)
+ */
+uint8_t gmul(uint8_t a, uint8_t b) {
+	uint8_t p = 0; /* the product of the multiplication */
+	while (a && b) {
+            if (b & 1) /* if b is odd, then add the corresponding a to p (final product = sum of all a's corresponding to odd b's) */
+                p ^= a; /* since we're in GF(2^m), addition is an XOR */
+
+            if (a & 0x80) /* GF modulo: if a >= 128, then it will overflow when shifted left, so reduce */
+                a = (a << 1) ^ 0x11b; /* XOR with the primitive polynomial x^8 + x^4 + x^3 + x + 1 (0b1_0001_1011) – you can change it but it must be irreducible */
+            else
+                a <<= 1; /* equivalent to a*2 */
+            b >>= 1; /* equivalent to b // 2 */
+	}
+	return p;
+}
+
+This example has cache, timing, and branch prediction side-channel leaks, and is not suitable for use in cryptography.
+D programming example
+
+This D program will multiply numbers in Rijndael's finite field and generate a PGM image:
+
+/**
+Multiply two numbers in the GF(2^8) finite field defined
+by the polynomial x^8 + x^4 + x^3 + x + 1.
+*/
+ubyte gMul(ubyte a, ubyte b) pure nothrow {
+    ubyte p = 0;
+
+    foreach (immutable ubyte counter; 0 .. 8) {
+        p ^= -(b & 1) & a;
+        auto mask = -((a >> 7) & 1);
+        // 0b1_0001_1011 is x^8 + x^4 + x^3 + x + 1.
+        a = (a << 1) ^ (0b1_0001_1011 & mask);
+        b >>= 1;
+    }
+
+    return p;
+}
+
+void main() {
+    import std.stdio, std.conv;
+    enum width = ubyte.max + 1, height = width;
+
+    auto f = File("rijndael_finite_field_multiplication.pgm", "wb");
+    f.writefln("P5\n%d %d\n255", width, height);
+    foreach (immutable y; 0 .. height)
+        foreach (immutable x; 0 .. width) {
+            immutable char c = gMul(x.to!ubyte, y.to!ubyte);
+            f.write(c);
+        }
+}
+
+This example does not use any branches or table lookups in order to avoid side channels and is therefore suitable for use in cryptography.
+See also
+
+    Zech's logarithm
+
+References
+
+The roots of such a polynomial must lie in an extension field of GF(q) since the polynomial is irreducible, and so, has no roots in GF(q).
+Mullen & Panario 2013, p. 17
+Design and Analysis of Experiments. John Wiley & Sons, Ltd. August 8, 2005. pp. 716–720. doi:10.1002/0471709948.app1.
+Lidl & Niederreiter 1983, p. 553
+Grošek, O.; Fabšič, T. (2018), "Computing multiplicative inverses in finite fields by long division" (PDF), Journal of Electrical Engineering, 69 (5): 400–402, doi:10.2478/jee-2018-0059, S2CID 115440420
+"Fast CRC Computation for Generic Polynomials Using PCLMULQDQ Instruction" (PDF). www.intel.com. 2009. Retrieved 2020-08-08.
+"Efficient Software Implementations of Large FiniteFieldsGF(2n) for Secure Storage Applications" (PDF). www.ccs.neu.edu. Retrieved 2020-08-08.
+"bpdegnan/aes". GitHub.
+
+    [1][dead link]
+
+Sources
+
+    Lidl, Rudolf; Niederreiter, Harald (1983), Finite Fields, Addison-Wesley, ISBN 0-201-13519-1 (reissued in 1984 by Cambridge University Press ISBN 0-521-30240-4).
+    Mullen, Gary L.; Panario, Daniel (2013), Handbook of Finite Fields, CRC Press, ISBN 978-1-4398-7378-6
+
+External links
+
+    Gordon, G. (1976). "Very simple method to find the minimum polynomial of an arbitrary nonzero element of a finite field". Electronics Letters. 12 (25): 663–664. doi:10.1049/el:19760508.
+    da Rocha, V. C.; Markarian, G. (2006). "Simple method to find trace of arbitrary element of a finite field". Electronics Letters. 42 (7): 423–325. doi:10.1049/el:20060473.
+    Trenholme, Sam. "AE's Galois field".
+    Planck, James S. (2007). "Fast Galois Field Arithmetic Library in C/C++".
+    Wikiversity: Reed–Solomon for Coders – Finite Field Arithmetic

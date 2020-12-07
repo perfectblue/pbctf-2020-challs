@@ -1,0 +1,9 @@
+a.out
+phase*
+!phase*.asm
+profile
+*.o
+*.bit
+*.xor
+*.i64
+.gdb_history
