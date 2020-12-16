@@ -19,6 +19,9 @@ Come on, this should be easy. It even has the PDB. Let's make a keygen.
  * dist.7z
 
 ## Solution
+
+[Author's writeup](https://gist.github.com/stong/5658219581cba2bd5d6c3b51b098f869)
+
 The binary implements 128-bit RSA in a horrible fashion using C++ templates.
 Specifically, it uses templates to construct BigNums out of smaller BigNums. The base BigNum size is 32-bit, so all operations boil down to 32-bit machine arithmetic.
 

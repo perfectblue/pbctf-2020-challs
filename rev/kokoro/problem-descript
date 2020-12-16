@@ -1,0 +1,7 @@
+# Kokoro
+
+I broke my heart. Please help me put back together the pieces.
+
+`DISPLAY=localhost:0:0 ssh -X kokoro@remote`
+
+NOTE: On Windows, you will need to run an X Server e.g. `vcxsrv.exe -nowgl -multiwindow`
